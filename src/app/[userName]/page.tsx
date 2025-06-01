@@ -79,34 +79,40 @@ export default function MainPage() {
   // タイマー再開・最初から開始の分岐UI
   const getTimerButton = (todo: Todo) => {
     if (todo.lastPaused && todo.timeRemaining < todo.duration * 60) {
+      const min = Math.floor((todo.timeRemaining ?? 0) / 60).toString();
+      const sec = ((todo.timeRemaining ?? 0) % 60).toString().padStart(2, "0");
       return (
-        <div style={{ display: "flex", gap: 8 }}>
-          <button style={{ background: "#22c55e", color: "#fff", fontWeight: 700, border: "none", borderRadius: 8, padding: "8px 12px" }}
-            onClick={() => router.push(`/timer/${todo.id}?user=${encodeURIComponent(userName)}`)}>
-            途中から再開
-          </button>
-          <button style={{ background: "#2563eb", color: "#fff", fontWeight: 700, border: "none", borderRadius: 8, padding: "8px 12px" }}
-            onClick={async () => {
-              // 最初から開始: timeRemaining/lastPausedリセット
-              const res = await fetch("/api/userdata");
-              const data = await res.json();
-              const users = data.users || [];
-              const userIdx = users.findIndex((u: any) => u.userName === userName);
-              if (userIdx === -1) return;
-              const user = users[userIdx];
-              const todoIdx = user.todos.findIndex((t: any) => t.id === todo.id);
-              if (todoIdx === -1) return;
-              user.todos[todoIdx].timeRemaining = user.todos[todoIdx].duration * 60;
-              user.todos[todoIdx].lastPaused = null;
-              await fetch("/api/userdata", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ users }),
-              });
-              setUserData({ ...user });
-            }}>
-            最初から開始
-          </button>
+        <div style={{ display: "flex", flexDirection: "column", gap: 2, alignItems: "flex-start" }}>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button style={{ background: "#22c55e", color: "#fff", fontWeight: 700, border: "none", borderRadius: 8, padding: "8px 12px" }}
+              onClick={() => router.push(`/timer/${todo.id}?user=${encodeURIComponent(userName)}`)}>
+              途中から再開
+            </button>
+            <button style={{ background: "#2563eb", color: "#fff", fontWeight: 700, border: "none", borderRadius: 8, padding: "8px 12px" }}
+              onClick={async () => {
+                // 最初から開始: timeRemaining/lastPausedリセットし、即タイマーページ遷移
+                const res = await fetch("/api/userdata");
+                const data = await res.json();
+                const users = data.users || [];
+                const userIdx = users.findIndex((u: any) => u.userName === userName);
+                if (userIdx === -1) return;
+                const user = users[userIdx];
+                const todoIdx = user.todos.findIndex((t: any) => t.id === todo.id);
+                if (todoIdx === -1) return;
+                user.todos[todoIdx].timeRemaining = user.todos[todoIdx].duration * 60;
+                user.todos[todoIdx].lastPaused = null;
+                await fetch("/api/userdata", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ users }),
+                });
+                setUserData({ ...user });
+                router.push(`/timer/${todo.id}?user=${encodeURIComponent(userName)}`);
+              }}>
+              最初から開始
+            </button>
+          </div>
+          <span style={{ fontSize: 13, color: "#2563eb", fontWeight: 600, marginLeft: 2 }}>残り {min}:{sec}</span>
         </div>
       );
     }
@@ -142,7 +148,7 @@ export default function MainPage() {
       </div>
       <div style={{ margin: "24px auto 0", maxWidth: 420, width: "95vw", background: "#fff", borderRadius: 16, boxShadow: "0 2px 8px #0001", padding: 20 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ fontWeight: 700, fontSize: 18 }}>タスクをこなして強くなろう！</span>
+          <span style={{ fontWeight: 700, fontSize: 18, color: "#1e293b" }}>タスクをこなして強くなろう！</span>
           <button aria-label="info" onClick={() => setShowInfo(v => !v)} style={{ background: "#e0e7ef", border: "none", borderRadius: 8, padding: "2px 8px", fontWeight: 700, cursor: "pointer" }}>i</button>
         </div>
         {showInfo && (
@@ -156,25 +162,29 @@ export default function MainPage() {
             </ul>
           </div>
         )}
-        <form style={{ marginTop: 20, display: "flex", gap: 8 }} onSubmit={handleAddTask}>
-          <input type="text" placeholder="タスク名" value={taskText} onChange={e => setTaskText(e.target.value)} required style={{ flex: 2, fontSize: 16, padding: 8, borderRadius: 8, border: "1px solid #ccc" }} />
-          <input type="number" min={1} max={180} value={taskDuration} onChange={e => setTaskDuration(Number(e.target.value))} required style={{ width: 70, fontSize: 16, padding: 8, borderRadius: 8, border: "1px solid #ccc" }} />
-          <span style={{ alignSelf: "center", fontWeight: 600 }}>分</span>
-          <button type="submit" style={{ background: "#2563eb", color: "#fff", fontWeight: 700, border: "none", borderRadius: 8, padding: "8px 16px" }}>追加</button>
+        <form style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 8 }} onSubmit={handleAddTask}>
+          <div style={{ display: "flex", gap: 8 }}>
+            <input type="text" placeholder="タスク名" value={taskText} onChange={e => setTaskText(e.target.value)} required style={{ flex: 2, fontSize: 16, padding: 8, borderRadius: 8, border: "1px solid #ccc" }} />
+            <input type="number" min={1} max={180} value={taskDuration} onChange={e => setTaskDuration(Number(e.target.value))} required style={{ width: 70, fontSize: 16, padding: 8, borderRadius: 8, border: "1px solid #ccc" }} />
+            <span style={{ alignSelf: "center", fontWeight: 600, color: "#1e293b" }}>分</span>
+          </div>
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <button type="submit" style={{ background: "#2563eb", color: "#fff", fontWeight: 700, border: "none", borderRadius: 8, padding: "8px 16px", marginTop: 2 }}>追加</button>
+          </div>
         </form>
         <div style={{ marginTop: 24, maxHeight: 260, overflowY: "auto" }}>
           {userData.todos.length === 0 ? (
             <div style={{ color: "#64748b", textAlign: "center" }}>タスクがありません</div>
           ) : (
             userData.todos.map((todo: Todo) => (
-              <div key={todo.id} style={{ background: "#f1f5f9", borderRadius: 8, padding: 12, marginBottom: 10, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <div>
-                  <div style={{ fontWeight: 600 }}>{todo.text}</div>
-                  <div style={{ fontSize: 13, color: "#64748b" }}>所要: {todo.duration}分</div>
+              <div key={todo.id} style={{ background: "#f1f5f9", borderRadius: 8, padding: 12, marginBottom: 10, display: "flex", alignItems: "stretch", justifyContent: "space-between", gap: 8 }}>
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                  <div style={{ fontWeight: 600, color: "#1e293b" }}>{todo.text}</div>
+                  <div style={{ fontSize: 13, color: "#64748b" }}>{todo.duration}<span style={{ color: "#1e293b" }}>分</span></div>
+                  <div style={{ marginTop: 8 }}>{getTimerButton(todo)}</div>
                 </div>
-                <div style={{ display: "flex", gap: 8 }}>
-                  {getTimerButton(todo)}
-                  <button style={{ background: "#ef4444", color: "#fff", fontWeight: 700, border: "none", borderRadius: 8, padding: "8px 12px" }} onClick={() => handleDeleteTask(todo.id)}>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start" }}>
+                  <button style={{ background: "#ef4444", color: "#fff", fontWeight: 700, border: "none", borderRadius: 8, padding: "8px 12px", marginBottom: 4 }} onClick={() => handleDeleteTask(todo.id)}>
                     削除
                   </button>
                 </div>

@@ -110,8 +110,8 @@ export default function TimerPage() {
   return (
     <main style={{ minHeight: "100dvh", background: "#f8fafc", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
       <div style={{ background: "#fff", borderRadius: 16, boxShadow: "0 2px 8px #0001", padding: 32, minWidth: 280, textAlign: "center" }}>
-        <div style={{ fontWeight: 700, fontSize: 22, marginBottom: 16 }}>{todo.text}</div>
-        <div style={{ fontSize: 48, fontWeight: 700, letterSpacing: 2, marginBottom: 16 }}>
+        <div style={{ fontWeight: 700, fontSize: 22, marginBottom: 16, color: "#1e293b" }}>{todo.text}</div>
+        <div style={{ fontSize: 48, fontWeight: 700, letterSpacing: 2, marginBottom: 16, color: "#1e293b" }}>
           {Math.floor(time / 60).toString().padStart(2, "0")}:{(time % 60).toString().padStart(2, "0")}
         </div>
         <button onClick={handlePause} style={{ background: "#f59e42", color: "#fff", fontWeight: 700, border: "none", borderRadius: 8, padding: "12px 32px", fontSize: 18 }}>中断</button>
