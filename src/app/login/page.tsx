@@ -50,7 +50,7 @@ export default function LoginPage() {
 
   return (
     <main style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", background: "#f8fafc" }}>
-      <h1 style={{ fontSize: 32, fontWeight: 700, marginBottom: 24, color: "#1e293b" }}>TodoQuest</h1>
+      <h1 style={{ fontWeight: 700, fontSize: 28, color: '#1e293b', marginBottom: 16 }}>TimerQuest ログイン</h1>
       <form onSubmit={handleSubmit} style={{ width: "90vw", maxWidth: 400, background: "#fff", borderRadius: 16, boxShadow: "0 2px 8px #0001", padding: 32, display: "flex", flexDirection: "column", gap: 16 }}>
         <label htmlFor="userName" style={{ fontWeight: 600, color: "#1e293b" }}>ユーザー名</label>
         <input id="userName" value={userName} onChange={e => setUserName(e.target.value)} autoFocus required style={{ fontSize: 18, padding: 12, borderRadius: 8, border: "1px solid #ccc" }} />

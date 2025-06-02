@@ -132,7 +132,7 @@ export default function MainPage() {
   return (
     <main style={{ minHeight: "100dvh", background: "#f8fafc", paddingBottom: 32 }}>
       <div style={{ background: "#2563eb", color: "#fff", padding: 16, borderBottomLeftRadius: 24, borderBottomRightRadius: 24, textAlign: "center" }}>
-        <div style={{ fontSize: 28, fontWeight: 700, letterSpacing: 1 }}>TodoQuest</div>
+        <div style={{ fontSize: 28, fontWeight: 700, letterSpacing: 1 }}>TimerQuest</div>
         <div style={{ marginTop: 12, fontWeight: 600, fontSize: 18 }}>
           <span style={{ cursor: "pointer", textDecoration: "underline dotted", fontWeight: 700 }}
             title="ユーザー切り替え"
