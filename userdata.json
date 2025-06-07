@@ -1,0 +1,69 @@
+{
+  "users": [
+    {
+      "userName": "Test",
+      "todos": [],
+      "xp": 1,
+      "level": 1
+    },
+    {
+      "userName": "Miz",
+      "todos": [
+        {
+          "id": 1,
+          "text": "皿洗い",
+          "duration": 25,
+          "timeRemaining": 1491,
+          "lastPaused": 1749127444254,
+          "userName": "Miz",
+          "completed": false
+        },
+        {
+          "id": 2,
+          "text": "洗濯物たたみ",
+          "duration": 30,
+          "timeRemaining": 1800,
+          "lastPaused": null,
+          "userName": "Miz",
+          "completed": false
+        }
+      ],
+      "xp": 0,
+      "level": 1
+    },
+    {
+      "userName": "Gengar",
+      "todos": [],
+      "xp": 0,
+      "level": 1
+    },
+    {
+      "userName": "Nun",
+      "todos": [],
+      "xp": 0,
+      "level": 1
+    },
+    {
+      "userName": "Shin",
+      "todos": [],
+      "xp": 0,
+      "level": 1
+    },
+    {
+      "userName": "Telly",
+      "todos": [
+        {
+          "id": 1,
+          "text": "test",
+          "duration": 25,
+          "timeRemaining": 1497,
+          "lastPaused": 1749273278058,
+          "userName": "Telly",
+          "completed": false
+        }
+      ],
+      "xp": 11,
+      "level": 2
+    }
+  ]
+}
