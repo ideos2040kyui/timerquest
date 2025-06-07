@@ -14,8 +14,8 @@ export default function LoginPage() {
     if (cached) {
       fetch("/api/userdata")
         .then(res => res.json())
-        .then(data => {
-          const found = data.users?.find((u: any) => u.userName === cached);
+        .then((data: { users: import("@/types").UserData[] }) => {
+          const found = data.users.find((u) => u.userName === cached);
           if (found) {
             router.replace("/" + encodeURIComponent(cached));
           } else {
@@ -34,8 +34,8 @@ export default function LoginPage() {
     setError("");
     // サーバからユーザー存在確認
     const res = await fetch("/api/userdata");
-    const data = await res.json();
-    const found = data.users?.find((u: any) => u.userName === userName);
+    const data: { users: import("@/types").UserData[] } = await res.json();
+    const found = data.users.find((u) => u.userName === userName);
     if (found) {
       localStorage.setItem("todoquest_user", userName);
       router.push("/" + encodeURIComponent(userName));

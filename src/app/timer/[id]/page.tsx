@@ -18,9 +18,9 @@ export default function TimerPage() {
     // タスク取得
     fetch("/api/userdata")
       .then(res => res.json())
-      .then(data => {
-        const user = data.users?.find((u: any) => u.userName === userName);
-        const t = user?.todos?.find((t: any) => t.id === todoId);
+      .then((data: { users: import("@/types").UserData[] }) => {
+        const user = data.users.find((u) => u.userName === userName);
+        const t = user?.todos.find((t) => t.id === todoId);
         if (t) {
           setTodo(t);
           setTime(t.timeRemaining ?? t.duration * 60);
@@ -44,12 +44,12 @@ export default function TimerPage() {
       clearInterval(intervalId);
       fetch("/api/userdata")
         .then(res => res.json())
-        .then(data => {
-          const users = data.users || [];
-          const userIdx = users.findIndex((u: any) => u.userName === userName);
+        .then((data: { users: import("@/types").UserData[] }) => {
+          const users = data.users;
+          const userIdx = users.findIndex((u) => u.userName === userName);
           if (userIdx === -1) return;
           const user = users[userIdx];
-          const todoIdx = user.todos.findIndex((t: any) => t.id === todoId);
+          const todoIdx = user.todos.findIndex((t) => t.id === todoId);
           if (todoIdx === -1) return;
           // XP加算
           const xpToAdd = todo.duration;
@@ -78,9 +78,6 @@ export default function TimerPage() {
     }
   }, [time, intervalId, router, userName, todo, todoId]);
 
-  if (loading) return <main style={{ minHeight: "100dvh", display: "flex", justifyContent: "center", alignItems: "center" }}>Loading...</main>;
-  if (!todo) return <main style={{ minHeight: "100dvh", display: "flex", justifyContent: "center", alignItems: "center" }}>タスクが見つかりません</main>;
-
   const handlePause = async () => {
     if (intervalId) clearInterval(intervalId);
     if (!todo) return;
@@ -88,12 +85,12 @@ export default function TimerPage() {
     const now = Date.now();
     fetch("/api/userdata")
       .then(res => res.json())
-      .then(data => {
-        const users = data.users || [];
-        const userIdx = users.findIndex((u: any) => u.userName === userName);
+      .then((data: { users: import("@/types").UserData[] }) => {
+        const users = data.users;
+        const userIdx = users.findIndex((u) => u.userName === userName);
         if (userIdx === -1) return;
         const user = users[userIdx];
-        const todoIdx = user.todos.findIndex((t: any) => t.id === todoId);
+        const todoIdx = user.todos.findIndex((t) => t.id === todoId);
         if (todoIdx === -1) return;
         user.todos[todoIdx].timeRemaining = time;
         user.todos[todoIdx].lastPaused = now;
@@ -117,12 +114,12 @@ export default function TimerPage() {
     const gainedXp = Math.floor(elapsedSec / 60);
     fetch("/api/userdata")
       .then(res => res.json())
-      .then(data => {
-        const users = data.users || [];
-        const userIdx = users.findIndex((u: any) => u.userName === userName);
+      .then((data: { users: import("@/types").UserData[] }) => {
+        const users = data.users;
+        const userIdx = users.findIndex((u) => u.userName === userName);
         if (userIdx === -1) return;
         const user = users[userIdx];
-        const todoIdx = user.todos.findIndex((t: any) => t.id === todoId);
+        const todoIdx = user.todos.findIndex((t) => t.id === todoId);
         if (todoIdx === -1) return;
         // XP加算
         if (gainedXp > 0) user.xp += gainedXp;
@@ -152,6 +149,9 @@ export default function TimerPage() {
         });
       });
   };
+
+  if (loading) return <main style={{ minHeight: "100dvh", display: "flex", justifyContent: "center", alignItems: "center" }}>Loading...</main>;
+  if (!todo) return <main style={{ minHeight: "100dvh", display: "flex", justifyContent: "center", alignItems: "center" }}>タスクが見つかりません</main>;
 
   return (
     <main style={{ minHeight: "100dvh", background: "#f8fafc", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", position: "relative" }}>

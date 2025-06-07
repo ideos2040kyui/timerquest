@@ -22,8 +22,8 @@ export default function MainPage() {
     // ユーザーデータ取得
     fetch("/api/userdata")
       .then(res => res.json())
-      .then(data => {
-        const found = data.users?.find((u: any) => u.userName === userName);
+      .then((data: { users: UserData[] }) => {
+        const found = data.users.find((u) => u.userName === userName);
         if (found) setUserData(found);
         setLoading(false);
       });
@@ -34,12 +34,12 @@ export default function MainPage() {
     e.preventDefault();
     if (!taskText.trim()) return;
     const res = await fetch("/api/userdata");
-    const data = await res.json();
-    const users = data.users || [];
-    const userIdx = users.findIndex((u: any) => u.userName === userName);
+    const data: { users: UserData[] } = await res.json();
+    const users = data.users;
+    const userIdx = users.findIndex((u) => u.userName === userName);
     if (userIdx === -1) return;
     const user = users[userIdx];
-    const newId = user.todos.length > 0 ? Math.max(...user.todos.map((t: any) => t.id)) + 1 : 1;
+    const newId = user.todos.length > 0 ? Math.max(...user.todos.map((t) => t.id)) + 1 : 1;
     user.todos.push({
       id: newId,
       text: taskText,
@@ -62,12 +62,12 @@ export default function MainPage() {
   // タスク削除
   const handleDeleteTask = async (id: number) => {
     const res = await fetch("/api/userdata");
-    const data = await res.json();
-    const users = data.users || [];
-    const userIdx = users.findIndex((u: any) => u.userName === userName);
+    const data: { users: UserData[] } = await res.json();
+    const users = data.users;
+    const userIdx = users.findIndex((u) => u.userName === userName);
     if (userIdx === -1) return;
     const user = users[userIdx];
-    user.todos = user.todos.filter((t: any) => t.id !== id);
+    user.todos = user.todos.filter((t) => t.id !== id);
     await fetch("/api/userdata", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -92,12 +92,12 @@ export default function MainPage() {
               onClick={async () => {
                 // 最初から開始: timeRemaining/lastPausedリセットし、即タイマーページ遷移
                 const res = await fetch("/api/userdata");
-                const data = await res.json();
-                const users = data.users || [];
-                const userIdx = users.findIndex((u: any) => u.userName === userName);
+                const data: { users: UserData[] } = await res.json();
+                const users = data.users;
+                const userIdx = users.findIndex((u) => u.userName === userName);
                 if (userIdx === -1) return;
                 const user = users[userIdx];
-                const todoIdx = user.todos.findIndex((t: any) => t.id === todo.id);
+                const todoIdx = user.todos.findIndex((t) => t.id === todo.id);
                 if (todoIdx === -1) return;
                 user.todos[todoIdx].timeRemaining = user.todos[todoIdx].duration * 60;
                 user.todos[todoIdx].lastPaused = null;

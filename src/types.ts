@@ -11,6 +11,7 @@ export interface Todo {
 }
 
 export interface UserData {
+  userName: string;
   todos: Todo[];
   xp: number;      // 獲得済みXP
   level: number;   // 現在のレベル
