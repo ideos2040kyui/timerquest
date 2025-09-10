@@ -1,7 +1,10 @@
 "use client";
+import { createClient } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import type { UserData, Todo } from "@/types";
+
+const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_KEY!);
 
 function getXpToNextLevel(level: number) {
   if (level < 12) return level * 10;
@@ -33,47 +36,40 @@ export default function MainPage() {
   const handleAddTask = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!taskText.trim()) return;
-    const res = await fetch("/api/userdata");
-    const data: { users: UserData[] } = await res.json();
-    const users = data.users;
-    const userIdx = users.findIndex((u) => u.userName === userName);
-    if (userIdx === -1) return;
-    const user = users[userIdx];
-    const newId = user.todos.length > 0 ? Math.max(...user.todos.map((t) => t.id)) + 1 : 1;
-    user.todos.push({
-      id: newId,
-      text: taskText,
-      duration: taskDuration,
-      timeRemaining: taskDuration * 60,
-      lastPaused: null,
-      userName,
-      completed: false,
-    });
-    await fetch("/api/userdata", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ users }),
-    });
+
+    const { data, error } = await supabase
+      .from("todos")
+      .insert([{ text: taskText, duration: taskDuration, userName }]);
+
+    if (error) {
+      console.error("Error adding task:", error.message);
+      return;
+    }
+
     setTaskText("");
     setTaskDuration(25);
-    setUserData({ ...user });
+    setUserData((prev) => ({
+      ...prev,
+      todos: [...(prev?.todos || []), data[0]],
+    }));
   };
 
   // タスク削除
   const handleDeleteTask = async (id: number) => {
-    const res = await fetch("/api/userdata");
-    const data: { users: UserData[] } = await res.json();
-    const users = data.users;
-    const userIdx = users.findIndex((u) => u.userName === userName);
-    if (userIdx === -1) return;
-    const user = users[userIdx];
-    user.todos = user.todos.filter((t) => t.id !== id);
-    await fetch("/api/userdata", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ users }),
-    });
-    setUserData({ ...user });
+    const { error } = await supabase
+      .from("todos")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.error("Error deleting task:", error.message);
+      return;
+    }
+
+    setUserData((prev) => ({
+      ...prev,
+      todos: prev?.todos.filter((t) => t.id !== id) || [],
+    }));
   };
 
   // タイマー再開・最初から開始の分岐UI
